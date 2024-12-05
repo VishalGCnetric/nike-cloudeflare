@@ -70,9 +70,11 @@ export default function App() {
 
 	return (
 		<Document>
-			<Layout menus={menus}>
-				<Outlet />
-			</Layout>
+			<h1 className="text-center text-7xl font-bold text-indigo-900">
+				VishalG
+			</h1>
+
+			{/* <Outlet /> */}
 		</Document>
 	);
 }
