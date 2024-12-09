@@ -2,9 +2,10 @@
 name = "nike-cloudeflare"
 main = "./server.ts"
 workers_dev = true
+compatibility_flags = ["nodejs_compat"]
 
 # https://developers.cloudflare.com/workers/platform/compatibility-dates
-compatibility_date = "2024-12-05"
+compatibility_date = "2024-12-09"
 
 kv_namespaces = [{ binding = "cache", id = "c6716a39b38746d7a87b221a719eeda3" }]
 
@@ -16,5 +17,4 @@ directory = "./build/client"
 command = "npm run build"
 
 [vars]
-GITHUB_OWNER = "vishalgCnetric"
-GITHUB_REPO = "nike-cloudflare"
+REACT_APP_BASE_URL="https://composer.dealerdashboard.io"

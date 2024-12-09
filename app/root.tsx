@@ -16,7 +16,7 @@ import {
 	useRouteError,
 } from '@remix-run/react';
 import stylesUrl from '~/styles.css?url';
-import { type Menu, ErrorLayout, Layout } from './layout';
+import { ErrorLayout, Layout } from './layout';
 
 export const links: LinksFunction = () => {
 	return [{ rel: 'stylesheet', href: stylesUrl }];
@@ -26,39 +26,12 @@ export const meta: MetaFunction = () => {
 	return [
 		{ charset: 'utf-8' },
 		{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
-		{ title: 'remix-cloudlfare-template' },
+		{ title: 'Nike, Just Do It Nike IN' },
 	];
 };
 
 export function loader({ context }: LoaderFunctionArgs) {
-	const menus: Menu[] = [
-		{
-			title: 'Docs',
-			links: [
-				{
-					title: 'Overview',
-					to: '/',
-				},
-			],
-		},
-		{
-			title: 'Useful links',
-			links: [
-				{
-					title: 'GitHub',
-					to: `https://github.com/${context.env.GITHUB_OWNER}/${context.env.GITHUB_REPO}`,
-				},
-				{
-					title: 'Remix docs',
-					to: 'https://remix.run/docs',
-				},
-				{
-					title: 'Cloudflare docs',
-					to: 'https://developers.cloudflare.com/pages',
-				},
-			],
-		},
-	];
+	const menus = 'test';
 
 	return json({
 		menus,
@@ -70,11 +43,9 @@ export default function App() {
 
 	return (
 		<Document>
-			<h1 className="text-center text-7xl font-bold text-indigo-900">
-				VishalG
-			</h1>
-
-			{/* <Outlet /> */}
+			<Layout>
+				<Outlet />
+			</Layout>
 		</Document>
 	);
 }
