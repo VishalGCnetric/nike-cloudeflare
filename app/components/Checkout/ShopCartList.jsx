@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import ShopCart from "./ShopCart"; // Ensure you import the ShopCart component
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, lazy } from "react";
+
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "@remix-run/react";
+const ShopCart = lazy(() => import("./ShopCart"));
 
 // Assuming shop is passed as a prop
 const ShopCartList = ({ shop,deliveryType,onClose,setSelectedOption }) => {
@@ -67,7 +68,7 @@ const ShopCartList = ({ shop,deliveryType,onClose,setSelectedOption }) => {
     }
     saveSellersToLocalStorage(selectedDealers,deliveryType)
     localStorage.setItem("selectedShippingDealers", JSON.stringify(selectedDealers));
-    notify();
+    // notify();
     navigate("/checkout/billing");
   };
   function saveSellersToLocalStorage(shopData, deliveryType) {

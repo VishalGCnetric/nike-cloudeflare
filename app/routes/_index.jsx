@@ -1,12 +1,11 @@
-import {json, useLoaderData } from '@remix-run/react'; // Correct import for useLoaderData
+import { json, useLoaderData } from '@remix-run/react';
+import Slider from "../components/Slider";
+import { lazy, Suspense } from 'react';
 
-// import Slider from "../components/Slider";
-// import SlickSliderComponent from "../components/Swiper";
+const SlickSliderComponent = lazy(() => import("../components/Swaper"));
 
-
-// Loader function to fetch data from the API
 export async function loader() {
-  const api = process.env.REACT_APP_BASE_URL;
+  const api = process.env.REACT_APP_BASE_URL || "http://4.240.112.193:50102";
 
   try {
     const response = await fetch(`${api}/content`);
@@ -22,19 +21,10 @@ export async function loader() {
 const Homepage = () => {
   const { data, error } = useLoaderData();
 
-  // Filters for specific types of images
-  const popularProductSliders = data?.filter((image) =>
-    image.title.includes("popular product slider")
-  );
-  const thepopularSpotlight = data?.filter((image) =>
-    image.title.includes("the popular spotlight")
-  );
-  const mainImage = data?.filter((image) =>
-    image.title.includes("main banner")
-  );
-  const latestImage = data?.filter((image) =>
-    image.title.includes("the latest")
-  );
+  const popularProductSliders = data?.filter(image => image.title.includes("popular product slider"));
+  const thepopularSpotlight = data?.filter(image => image.title.includes("the popular spotlight"));
+  const mainImage = data?.filter(image => image.title.includes("main banner"));
+  const latestImage = data?.filter(image => image.title.includes("the latest"));
 
   if (error) {
     return (
@@ -47,8 +37,8 @@ const Homepage = () => {
   }
 
   return (
-    <div className="w-full">
-      <div className="pl-6 pr-6">
+    <div className="w-[90vw] mx-auto">
+      <div className="pl-6 pr-6 mx-auto">
         <img
           src={mainImage?.[0]?.url}
           alt="Nike Electric Pack"
@@ -72,17 +62,21 @@ const Homepage = () => {
           </div>
         </div>
       </div>
+
+      <Slider data={popularProductSliders} />
+
       <div>
-        {/* <Slider data={popularProductSliders} /> */}
+        <Suspense fallback={<div className="loader">Loading...</div>}>
+          <SlickSliderComponent data={thepopularSpotlight} />
+        </Suspense>
       </div>
-      <div>
-        {/* <SlickSliderComponent data={thepopularSpotlight} /> */}
-      </div>
+
       <div className="w-full mx-auto px-2 py-8">
         <h2 className="text-3xl font-bold mb-6">The Latest</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {/* Card 1 */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105">
+          {/* Cards here */}
+             {/* Card 1 */}
+             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105">
             <img
               src={latestImage?.[0]?.url}
               alt="Nike Zenvy Collection"

@@ -11,22 +11,11 @@ const ShoppingLoader = () => {
         <div className="flex justify-between w-20">
           {/* First Wheel */}
           <div
-            className="w-6 h-6 bg-black rounded-full"
-            style={{
-              animation: 'spin-slow 2s linear infinite',
-              animationDelay: '0s',
-              opacity: 1,
-            }}
+            className="w-6 h-6 bg-black rounded-full animate-spin-slow"
           ></div>
-          {/* Second Wheel (with delay) */}
+          {/* Second Wheel */}
           <div
-            className="w-6 h-6 bg-black rounded-full"
-            style={{
-              animation: 'spin-slow 2s linear infinite',
-              animationDelay: '1s',
-              opacity: 0,
-              animationFillMode: 'forwards',
-            }}
+            className="w-6 h-6 bg-black rounded-full animate-spin-slow"
           ></div>
         </div>
       </div>
@@ -41,6 +30,10 @@ const ShoppingLoader = () => {
             100% {
               transform: rotate(360deg);
             }
+          }
+
+          .animate-spin-slow {
+            animation: spin-slow 2s linear infinite;
           }
         `}
       </style>

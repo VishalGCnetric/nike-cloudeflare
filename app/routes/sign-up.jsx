@@ -1,12 +1,14 @@
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Form } from '@remix-run/react';
-import { signupUser } from '../utils/api';
+import { signup } from '../utils/api'; // Utility function for the signup API
 
 // Action function for handling form submission
+import { json, redirect } from '@remix-run/node';
+
 export let action = async ({ request }) => {
   const formData = new URLSearchParams(await request.text());
-  
+
   const firstName = formData.get('firstName');
   const lastName = formData.get('lastName');
   const email = formData.get('email');
@@ -14,19 +16,30 @@ export let action = async ({ request }) => {
   const phoneNumber = formData.get('phoneNumber');
 
   try {
-    // Call your signup logic here (e.g., dispatching an action to your redux store or server-side logic)
-    // For example, you can use a utility function for making an API request:
-    await signupUser({ firstName, lastName, email, password, phoneNumber });
+    // Make API call to signup the user
+    await signup({ firstName, lastName, email, password, phoneNumber });
 
-    // Redirect to the sign-in page on successful signup
-    return redirect('/auth/signin');
+    // Redirect to login on successful signup
+    return redirect('/login');
   } catch (error) {
-    // Handle errors (e.g., return an error message to the client)
-    return json({ error: 'Sign-up failed. Please try again.' }, { status: 400 });
+    // Return error details to the client
+    return json(
+      { error: error.message || 'Sign-up failed. Please try again.' },
+      { status: 400 }
+    );
   }
 };
 
+import { useActionData } from '@remix-run/react';
+
 const NikeSignUpForm = () => {
+  const actionData = useActionData();
+
+  // Display error toast if actionData contains an error
+  if (actionData?.error) {
+    toast.error(actionData.error, { autoClose: 3000 });
+  }
+
   return (
     <div className="max-w-md mx-auto p-6 font-sans">
       <h2 className="text-2xl font-bold mb-2">Sign Up</h2>

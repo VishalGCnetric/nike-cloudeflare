@@ -39,7 +39,7 @@ const CartItem = ({ item, onQuantityChange, onDelete }) => {
         </button>
       </div>
       <div className="font-semibold">
-        Total: ₹{item.linePrice.toLocaleString()}
+        {/* Total: ₹{item.linePrice.toLocaleString()} */}
       </div>
     </div>
   );

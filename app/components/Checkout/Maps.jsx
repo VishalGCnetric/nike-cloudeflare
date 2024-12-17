@@ -7,7 +7,7 @@ import {
   useMap,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import L, { Map } from 'leaflet';
 import axios from 'axios';
 
 // Custom icon for user location (red icon)
@@ -59,13 +59,13 @@ const Maps = ({ currentLocation, nearbyShops }) => {
   const [address, setAddress] = useState('');
   const [error, setError] = useState(null);
   const markersRef = useRef({});
-
+console.log(nearbyShops)
   useEffect(() => {
     // Reverse geocode to get the address from coordinates
     if (currentLocation) {
       axios
         .get(
-          `https://nominatim.openstreetmap.org/reverse?lat=${currentLocation.lng}&lon=${currentLocation.lat}&format=json`
+          `https://nominatim.openstreetmap.org/reverse?lat=${currentLocation.lat}&lon=${currentLocation.lng}&format=json`
         )
         .then((res) => setAddress(res.data.display_name))
         .catch(() => setError('Unable to fetch address'));
@@ -105,7 +105,7 @@ const Maps = ({ currentLocation, nearbyShops }) => {
     return null;
   };
 
-  const position = [currentLocation.lng,currentLocation.lat ];
+  const position = [currentLocation.lat,currentLocation.lng ];
 
   return (
     <div>
@@ -113,6 +113,7 @@ const Maps = ({ currentLocation, nearbyShops }) => {
       {currentLocation ? (
         <div>
           <MapContainer
+          key={Date.now()}
             center={position}
             zoom={13} // Zoom level
             style={{ height: '400px', width: '100%' }}

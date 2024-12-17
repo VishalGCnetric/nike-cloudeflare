@@ -1,22 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { FaStripe } from "react-icons/fa6"; // Importing Stripe icon
 import CheckoutSuccessModal from "./CheckoutSuccessModel";
+import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
+import { checkout } from "../../utils/api";
 
 const PaymentForm = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
+const {cart,address}=useLoaderData();
+const {token}=useOutletContext();
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [isModalVisible, setModalVisible] = useState(false);
   const [datas, setData] = useState(null);
-  const { cart, status } = useSelector((state) => state.cart);
   const [sdkReady, setSdkReady] = useState(false);
   const paypalCardRef = useRef(null);
   const paypalRef = useRef(null);
-
+  
   useEffect(() => {
     if ((paymentMethod === "card" || paymentMethod === "paypal") && !sdkReady) {
       const scriptExists = document.querySelector(
@@ -81,12 +80,10 @@ const PaymentForm = () => {
     }
   }, [sdkReady, paymentMethod, cart?.total]); // Add cart.total as a dependency
 
-  const handlePlaceOrder = () => {
-    let shippingAddress = JSON.parse(
-      localStorage.getItem("shippingAddress") || "{}"
-    );
+  const handlePlaceOrder = async() => {
+    let shippingAddress = address;
     const dealerData = JSON.parse(localStorage.getItem("dealerData"));
-    const cartId = JSON.parse(localStorage.getItem("cartId"));
+    const cartId = cart.id;
 
     let data;
     if (dealerData) {
@@ -101,32 +98,19 @@ const PaymentForm = () => {
         shippingAddress,
       });
     }
+console.log(data)
+    try {
+      const response = await checkout(token,data);
+      setData(response);
+      console.log('Checkout Successful:', response);
+      navigate(`/checkout/success/${response.orderId}`)
+      // Redirect user to a success page or show a confirmation message
+      setModalVisible(true)
+    } catch (error) {
+      console.error('Checkout failed:', error);
+      // Handle error appropriately (e.g., show an error message to the user)
+    }
 
-    const config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: `${process.env.REACT_APP_BASE_URL}/checkout`,
-      headers: {
-        accesstoken: sessionStorage.getItem("token"),
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-
-    axios
-      .request(config)
-      .then((response) => {
-        const { orderId, expectedDelivery } = response.data;
-        dispatch({
-          type: "checkout/setCheckoutDetails",
-          payload: { orderId, expectedDelivery },
-        });
-        setData({ orderId, expectedDelivery });
-        setModalVisible(true);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   const handlePayPalSuccess = (details, data) => {

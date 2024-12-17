@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@remix-run/react";
 
 const CheckoutSuccessModal = ({
   isVisible,
@@ -15,7 +15,7 @@ const CheckoutSuccessModal = ({
     if (isVisible) {
       const timer = setTimeout(() => {
         navigate(`/checkout/success/${orderId}`);
-      }, 2000);
+      }, 5000);
 
       return () => clearTimeout(timer); // Clean up the timer when modal unmounts or isVisible changes
     }

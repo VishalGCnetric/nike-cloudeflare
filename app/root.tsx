@@ -1,7 +1,9 @@
-import type {
-	LinksFunction,
-	LoaderFunctionArgs,
-	MetaFunction,
+import {
+	createCookie,
+	type LinksFunction,
+	type LoaderFunctionArgs,
+	type MetaFunction,
+	type ActionFunctionArgs,
 } from '@remix-run/cloudflare';
 import * as React from 'react';
 import {
@@ -17,7 +19,7 @@ import {
 } from '@remix-run/react';
 import stylesUrl from '~/styles.css?url';
 import { ErrorLayout, Layout } from './layout';
-
+import { commitSession, getSession } from './utils/cookies';
 export const links: LinksFunction = () => {
 	return [{ rel: 'stylesheet', href: stylesUrl }];
 };
@@ -30,21 +32,52 @@ export const meta: MetaFunction = () => {
 	];
 };
 
-export function loader({ context }: LoaderFunctionArgs) {
-	const menus = 'test';
+// Create cookies to retrieve the token and user
+
+// loader function
+export async function loader({ request }: { request: any }) {
+	const cookieHeader = request.headers.get('Cookie') || '';
+	const session = await getSession(cookieHeader);
+	const token = session.get('token'); // Replace 'userId' with the key you use for the token
+	console.log(token, 'root');
+	// if (!token) {
+	//   return json(
+	// 	{ error: "Unauthorized" },
+	// 	{
+	// 	  status: 401,
+	// 	}
+	//   );
+	// }
 
 	return json({
-		menus,
+		token,
 	});
 }
 
+// Action to clear the authToken cookie
+export async function action({ request }: ActionFunctionArgs) {
+	const session = await getSession(request.headers.get('Cookie'));
+
+	// Set token to null
+	session.set('token', null);
+
+	return json(
+		{ success: true },
+		{
+			headers: {
+				'Set-Cookie': await commitSession(session),
+			},
+		},
+	);
+}
+
 export default function App() {
-	const { menus } = useLoaderData<typeof loader>();
+	const { token } = useLoaderData<typeof loader>();
 
 	return (
 		<Document>
 			<Layout>
-				<Outlet />
+				<Outlet context={{ token }} />
 			</Layout>
 		</Document>
 	);

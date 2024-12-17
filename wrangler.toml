@@ -17,4 +17,4 @@ directory = "./build/client"
 command = "npm run build"
 
 [vars]
-REACT_APP_BASE_URL="https://composer.dealerdashboard.io"
+REACT_APP_BASE_URL="http://4.240.112.193:50102"

@@ -1,5 +1,4 @@
 import React from 'react';
-import OrderSummary from './OrderSummary';
 import IDClearanceForm from './IDClearence';
 
 const sharedClasses = {

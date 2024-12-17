@@ -1,90 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Button, Modal, RadioGroup, Radio, FormControlLabel } from '@mui/material';
-import { toast } from 'react-toastify'; // For toast notifications
-import axios from 'axios'; // For geocoding requests
-import ShopSelectionModal from './ShopSelectionModal'; // Custom modal for shop selection
-import { useNavigate } from 'react-router-dom';
-import { fetchEligibleDealers } from '../../redux/slices/cartSlice';
+import { useState, useEffect } from 'react';
+import { useLoaderData, useNavigate } from '@remix-run/react';
+import ShopSelectionModal from './ShopSelectionModal';
+import { toast } from 'react-toastify';
+import { Button, Modal } from '@mui/material';
 
-const dummyshop = {
-  data: [
-    {
-      variantId: "107",
-      variantName: "Air Jordan 1 Low SE Brown/Sail/Neutral Grey/Archaeo Brown",
-      sku: "HF1567-200",
-      sellers: [
-        {
-          sellerId: "3",
-          sellerName: "Sneakersnstuff",
-          price: 1149500,
-          coordinates: { lat: 76.6126324, lng: 18.2604291 },
-          mapLink: "https://maps.app.goo.gl/ginWn95sFEK5PWKF8",
-        },
-        {
-          sellerId: "2",
-          sellerName: "Dev Logistics",
-          price: 274750,
-          coordinates: { lat: 75.6326324, lng: 18.2604291 }
-          ,
-          mapLink: "https://www.google.com/maps/place/Chandni+Chowk,+Delhi/@28.6513747,77.2316374,15z/",
-        }
-      ],
-    },
-    {
-      variantId: "150",
-      variantName: "Jordan Artist Series By Darien Birks Dark Smoke Grey",
-      sku: "HF5470-070",
-      sellers: [
-        {
-          sellerId: "2",
-          sellerName: "Dev Logistics",
-          price: 274750,
-          coordinates: { lat: 75.6326324, lng: 18.2604291 }
-          ,
-          mapLink: "https://www.google.com/maps/place/Chandni+Chowk,+Delhi/@28.6513747,77.2316374,15z/",
-        },
-        {
-          sellerId: "5",
-          sellerName: "Finish Line",
-          price: 549500,
-          coordinates: { lat: 76.1826324, lng: 18.7304291 },
-          mapLink: "https://maps.app.goo.gl/tSQsEzQzpZca7uZc6",
-        },
-      ],
-    },
-  ],
-};
-
-const ShippingDetails = () => {
-  const dispatch = useDispatch();
-  const shop = useSelector((state) => state.cart.eligibleDealers);
- 
-  const status = useSelector((state) => state.cart.status);
-  const error = useSelector((state) => state.cart.error);
+export default function ShippingDetails() {
+  const navigate = useNavigate();
+  const { shippingAddress, eligibleDealers } = useLoaderData();
+  const [showShippingPopup, setShowShippingPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [shippingCoordinates, setShippingCoordinates] = useState(null);
 
   const [locationGranted, setLocationGranted] = useState(false);
   const [browserCoordinates, setBrowserCoordinates] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('shipping');
   const [selectedShop, setSelectedShop] = useState(null);
+
   const [nearbyShops, setNearbyShops] = useState([]);
-  const [shippingCoordinates, setShippingCoordinates] = useState(null);
-  const [showShippingPopup, setShowShippingPopup] = useState(false);
-const navigate=useNavigate();
-  // Get shipping data from Redux store or localStorage
-  const shippingData =  JSON.parse(localStorage.getItem('shippingAddress'));
- // Dispatch fetchEligibleDealers when the modal opens and show loader
-useEffect(() => {
-  if (isModalOpen) {
-    setIsLoading(true); // Show loader when fetching starts
-    dispatch(fetchEligibleDealers()).finally(() => setIsLoading(false)); // Hide loader once fetching is done
-  }
-}, [dispatch, isModalOpen]);
+  const [error, setError] = useState('');
 
-
-  // Request browser location permission
   useEffect(() => {
     const geoOptions = {
       enableHighAccuracy: true, // More accurate, but drains battery
@@ -97,12 +32,12 @@ useEffect(() => {
         setLocationGranted(true);
         // setPosition([18.2604291, 76.1826324]);
 
-        // setBrowserCoordinates({
-        //     lng:18.2604291,
-        //     lat:76.1826324
-        // });
+        setBrowserCoordinates({
+            lat:18.2604291,
+            lng:76.1826324
+        });
         // console.log(position.coords.latitude,position.coords.longitude)
-        setBrowserCoordinates({lat:parseFloat(position.coords.longitude), lng: parseFloat(position.coords.latitude) });
+        // setBrowserCoordinates({lat:parseFloat(position.coords.longitude), lng: parseFloat(position.coords.latitude) });
 
         // setBrowserCoordinates([position.coords.latitude,position.coords.longitude]);
         //   lat: position.coords.latitude,
@@ -129,61 +64,57 @@ useEffect(() => {
       geoOptions
     );
   }, []);
- 
-// console.log(locationGranted,browserCoordinates);
-  // Fetch nearby shops based on browser coordinates
-  useEffect(() => {
-    if (browserCoordinates && isModalOpen) {
-      const shopsWithin50km = shop?.reduce((acc, variant) => {
-        const nearbySellers = variant.sellers.map((seller) => {
-          let distance = calculateDistance(
-            browserCoordinates.lat,
-            browserCoordinates.lng,
-            seller.coordinates.lng,
-            seller.coordinates.lat
-          );
-          distance = Math.ceil(distance);
-          // console.log(`Distance from user to seller (${seller.sellerName}): ${distance} km`);
-          return {
-            ...seller,
-            distance, // Add the distance to the seller object
-          };
-        }).filter(seller => seller.distance <= 50); // Keep only those within 51km
-  
-        // Ensure the variant is added even if there are no sellers within 50km
-        acc.push({
-          sku: variant.sku,
-          variantId: variant.variantId,
-          variantName: variant.variantName,
-          sellers: nearbySellers.length ? nearbySellers : [], // If no sellers, send an empty array
-        });
-  
-        return acc;
-      }, []);
-  
-      setNearbyShops(shopsWithin50km);
-    }
-  }, [browserCoordinates, shop, isModalOpen]);
-  
-  
+
   // Calculate distance between two coordinates (Haversine formula)
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
-    const a = 
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in km
-    return distance;
+    return R * c; // Distance in km
   };
-  function deg2rad(deg) {
-    return deg * (Math.PI / 180);
-}
 
-  // Attempt address geocoding
+  const deg2rad = (deg) => deg * (Math.PI / 180);
+
+  // Filter shops within 50km
+  useEffect(() => {
+    if (browserCoordinates && isModalOpen) {
+      const shopsWithin50km = eligibleDealers.reduce((acc, variant) => {
+        const nearbySellers = variant.sellers
+          .map((seller) => {
+            if (!seller.coordinates) {
+              console.warn('Seller coordinates not defined:', seller);
+              return null; // Skip if coordinates are not defined
+            }
+
+            return {
+              ...seller,
+              distance: calculateDistance(
+                browserCoordinates.lat,
+                browserCoordinates.lng,
+                seller.coordinates.lat,
+                seller.coordinates.lng
+              ),
+            };
+          })
+          .filter(Boolean) // Filter out any null values
+          .filter((seller) => seller.distance <= 50);
+
+        if (nearbySellers.length > 0) {
+          acc.push({
+            ...variant,
+            sellers: nearbySellers,
+          });
+        }
+        return acc;
+      }, []);
+      setNearbyShops(shopsWithin50km);
+    }
+  }, [browserCoordinates, eligibleDealers, isModalOpen]);
   const attemptAddressGeocoding = async (address) => {
     const performGeocoding = async (query) => {
       try {
@@ -192,7 +123,11 @@ useEffect(() => {
         );
         if (response.data.length > 0) {
           const { lat, lon } = response.data[0];
-          setBrowserCoordinates({lat:parseFloat(lon), lng: parseFloat(lat) });
+          // setBrowserCoordinates({lat:parseFloat(lon), lng: parseFloat(lat) });
+          setBrowserCoordinates({
+            lng:18.2604291,
+            lat:76.1826324
+        });
           return true;
         }
         return false;
@@ -215,8 +150,7 @@ useEffect(() => {
 
     toast.error('Address not found. Please opt for normal shipping.');
   };
-
-  // Handle shipping option change
+  // Handle option change
   const handleOptionChange = async (event) => {
     const value = event.target.value;
     setSelectedOption(value);
@@ -236,42 +170,70 @@ useEffect(() => {
     }
   };
 
-  // Handle shop selection and close modal
   const handleShopSelection = (shop) => {
     setSelectedShop(shop);
     setIsModalOpen(false);
 
-    localStorage.setItem("selectedShop", JSON.stringify(shop));
+    // localStorage.setItem("selectedShop", JSON.stringify(shop));
     
 
   };
 
-  // Handle shipping confirmation
-  const handleShippingConfirmation = async (useCurrentLocation) => {
-    if (useCurrentLocation) {
-      setShippingCoordinates(browserCoordinates);
-    } else if (shippingData) {
-      await attemptAddressGeocoding(shippingData);
-    }
-    setShowShippingPopup(false);
-    setIsModalOpen(true);
-  };
-// console.log("NearbyShop",nearbyShops)
+// Handle shipping confirmation
+const handleShippingConfirmation = async (useCurrentLocation) => {
+  if (useCurrentLocation) {
+    setShippingCoordinates(browserCoordinates);
+  } else if (shippingData) {
+    await attemptAddressGeocoding(shippingData);
+  }
+  setShowShippingPopup(false);
+  setIsModalOpen(true);
+};
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Shipping Details</h1>
-      
-      <RadioGroup value={selectedOption} onChange={handleOptionChange}>
-        <FormControlLabel value="shipping" control={<Radio />} label="Ship to my address" />
+      <div className="space-y-4">
+        <label className="flex items-center space-x-2">
+          <input
+            type="radio"
+            value="shipping"
+            checked={selectedOption === 'shipping'}
+            onChange={handleOptionChange}
+            className="form-radio text-indigo-600 h-5 w-5"
+          />
+          <span className="text-gray-800">Ship to my address</span>
+        </label>
+
         {locationGranted && (
           <>
-            <FormControlLabel value="pickup" control={<Radio />} label="Pick from dealer" />
-            <FormControlLabel value="ship" control={<Radio />} label="Ship from dealer" />
+            <label className="flex items-center space-x-2">
+              <input
+                type="radio"
+                value="pickup"
+                checked={selectedOption === 'pickup'}
+                onChange={handleOptionChange}
+                className="form-radio text-indigo-600 h-5 w-5"
+              />
+              <span className="text-gray-800">Pick from dealer</span>
+            </label>
+
+            <label className="flex items-center space-x-2">
+              <input
+                type="radio"
+                value="ship"
+                checked={selectedOption === 'ship'}
+                onChange={handleOptionChange}
+                className="form-radio text-indigo-600 h-5 w-5"
+              />
+              <span className="text-gray-800">Ship from dealer</span>
+            </label>
           </>
         )}
-      </RadioGroup>
+      </div>
 
-      <ShopSelectionModal
+      {isModalOpen && (
+        <ShopSelectionModal
         isOpen={isModalOpen}
         onClose={() =>{ setIsModalOpen(false)
           // setSelectedOption("shipping")
@@ -283,9 +245,9 @@ useEffect(() => {
         onSelectShop={handleShopSelection}
         isLoading={isLoading} // Pass the loader state to the modal
         deliveryType={selectedOption}
-      />
-
-      <Modal open={showShippingPopup} onClose={() => setShowShippingPopup(false)} className="flex align-center justify-center">
+        />
+      )}
+  <Modal open={showShippingPopup} onClose={() => setShowShippingPopup(false)} className="flex align-center justify-center">
         <div className="mt-[18%] p-6 bg-white rounded-md w-1/2 h-[150px] text-center">
           <h2 className="text-xl font-bold">Shipping Confirmation</h2>
           <p>Is your shipping address the same as your current location?</p>
@@ -295,24 +257,21 @@ useEffect(() => {
           </div>
         </div>
       </Modal>
-
-      <button 
-      onClick={()=>{
-        localStorage.removeItem('selectedShippingDealers');
-        localStorage.removeItem('dealerData');
-        // localStorage.removeItem('selectedShippingDealers');
-
-        // localStorage.clear();
-        navigate("/checkout/billing")}
-
-
-    }
-        className="w-full bg-black text-white p-2 rounded-lg hover:bg-zinc-800"
-        disabled={!selectedShop && selectedOption !== 'shipping'}>
+      <button
+        className="bg-black w-full text-white p-2 rounded-lg mt-4"
+        onClick={()=>{
+          localStorage.removeItem('selectedShippingDealers');
+          localStorage.removeItem('dealerData');
+          // localStorage.removeItem('selectedShippingDealers');
+  
+          // localStorage.clear();
+          navigate("/checkout/billing")}
+  
+  
+      }
+      >
         Continue
       </button>
     </div>
   );
-};
-
-export default ShippingDetails;
+}
