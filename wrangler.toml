@@ -4,6 +4,10 @@ main = "./server.ts"
 workers_dev = true
 compatibility_flags = ["nodejs_compat"]
 
+[env.production]
+# Specify your build output directory
+pages_build_output_dir = "dist"  # Adjust this according to your build setup
+
 # https://developers.cloudflare.com/workers/platform/compatibility-dates
 compatibility_date = "2024-12-09"
 
@@ -17,4 +21,4 @@ directory = "./build/client"
 command = "npm run build"
 
 [vars]
-REACT_APP_BASE_URL="http://4.240.112.193:50102"
+REACT_APP_BASE_URL="https://composer.dealerdashboard.universalcommerce.io"
