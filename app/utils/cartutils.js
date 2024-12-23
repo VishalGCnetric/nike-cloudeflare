@@ -79,3 +79,6 @@ export const addToCart = async (productVariantId, quantity, token) => {
 
 	return response.json(); // Assuming the API returns the updated cart data
 };
+export default function cartUtils() {
+	console.log('Cart utilities placeholder');
+}
