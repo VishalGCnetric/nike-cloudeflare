@@ -6,7 +6,7 @@ import PaymentForm from "../components/Checkout/Payment";
 // import OrderForm from "../components/Checkout/OrderForm";
 import OrderSummary from "../components/Checkout/OrderSummary";
 import { getSession } from "../utils/cookies";
-import { getCart } from "../utils/cartUtils";
+import { getCart } from "../utils/cartutils";
 import { fetchDealers } from "../utils/api";
 
 export default function Checkout() {
