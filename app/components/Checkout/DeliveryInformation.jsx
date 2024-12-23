@@ -17,9 +17,10 @@ const dummyData = {
 };
 
 export default function DeliveryInformation() {
-  const { shippingAddress } = useLoaderData() || {}; // Ensure we safely destructure
+  // const { shippingAddress } = useLoaderData() || {}; // Ensure we safely destructure
+  const shippingAddress=JSON.parse(localStorage.getItem("shippingAddress"))||{};
   const [isModalOpen, setModalOpen] = useState(false);
-
+console.log(shippingAddress)
   // Use updated address from action, or loader data as fallback
   const address = shippingAddress || dummyData;
   return (

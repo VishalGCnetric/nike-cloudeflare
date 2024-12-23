@@ -1,13 +1,22 @@
-import { useActionData, Form, redirect } from '@remix-run/react';
-import { json } from '@remix-run/cloudflare'; // Replace with your chosen server runtime if not using Cloudflare
-import React from 'react';
+import { useActionData, Form, useNavigate,  } from '@remix-run/react';
+
+import React, { useEffect } from 'react';
 
 // KV Namespace (Cloudflare-specific, provided by the environment)
 
 
 export default function AddressForm() {
   const actionData = useActionData();
+  const navigate = useNavigate();
 
+  // Effect to handle saving to local storage and redirecting
+  useEffect(() => {
+    if (actionData?.success) {
+      const addressData = JSON.stringify(actionData.address);
+      localStorage.setItem('shippingAddress', addressData); // Save address to local storage
+      navigate('/checkout/shipping'); // Redirect to the billing page
+    }
+  }, [actionData, navigate]);
   return (
     <div className="max-w-md mx-auto p-4 bg-card rounded-lg shadow-md">
       <h2 className="text-lg font-semibold mb-4">Enter your shipping address:</h2>

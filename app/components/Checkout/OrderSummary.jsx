@@ -37,10 +37,11 @@ const dummyCart = {
 const OrderSummary = () => {
   // Use loader data if cartData prop is not provided
   const {cart} = useLoaderData();
+  console.log("order",cart)
   // const cart = dummyCart || loaderData || dummyCart;
-  if (!cart) {
-    return <p>Your cart is empty. Please add items before proceeding.</p>;
-  }
+  // if (!cart) {
+  //   return <p>Your cart is empty. Please add items before proceeding.</p>;
+  // }
   return (
     <div className={cardClass}>
       <h2 className="text-lg font-semibold text-zinc-800">Order Summary</h2>

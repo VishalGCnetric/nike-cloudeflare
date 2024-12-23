@@ -31,36 +31,72 @@ export default function Checkout() {
 }
 
 
+// export const loader = async ({ context, request }) => {
+//   // Extract token from session
+//   const cookieHeader = request.headers.get("Cookie") || "";
+//   const session = await getSession(cookieHeader);
+//   const token = session.get("token");
+
+//   if (!token) {
+//     return json({ error: "Unauthorized: Token not found" }, { status: 401 });
+//   }
+
+//   try {
+//     // Fetch cart details
+//     const cart = await getCart(token);
+//     if (!cart) {
+//       return json({ error: "Cart is empty or not found" }, { status: 404 });
+//     }
+
+   
+//     const eligibleDealers = await fetchDealers(token);
+
+//     // Fetch shipping address from KV storage
+//     let shippingAddress = await context.env.cache.get(`shippingAddress`);
+//     if (shippingAddress) {
+//       shippingAddress = JSON.parse(shippingAddress);
+//     } else {
+//       return json({ error: 'Address not found' }, { status: 404 });
+//     }
+// console.log({ shippingAddress, eligibleDealers, cart })
+//     // Return the combined response
+//     return json({ shippingAddress, eligibleDealers, cart });
+
+//   } catch (error) {
+//     console.error('Error in loader:', error.message);
+//     return json({ error: 'Internal Server Error' }, { status: 500 });
+//   }
+// };
+
 export const loader = async ({ context, request }) => {
-  // Extract token from session
-  const cookieHeader = request.headers.get("Cookie") || "";
-  const session = await getSession(cookieHeader);
-  const token = session.get("token");
-
-  if (!token) {
-    return json({ error: "Unauthorized: Token not found" }, { status: 401 });
-  }
-
   try {
+    // Extract token from session
+    const cookieHeader = request.headers.get("Cookie") || "";
+    const session = await getSession(cookieHeader);
+
+    if (!session) {
+      console.error("Session is undefined");
+      return json({ error: "Session not found" }, { status: 401 });
+    }
+
+    const token = session.get("token");
+    if (!token) {
+      return json({ error: "Unauthorized: Token not found" }, { status: 401 });
+    }
+
     // Fetch cart details
     const cart = await getCart(token);
     if (!cart) {
       return json({ error: "Cart is empty or not found" }, { status: 404 });
     }
 
-   
+    // Fetch eligible dealers
     const eligibleDealers = await fetchDealers(token);
+console.log(context.env.cache)
 
-    // Fetch shipping address from KV storage
-    let shippingAddress = await context.env.cache.get(`shippingAddress`);
-    if (shippingAddress) {
-      shippingAddress = JSON.parse(shippingAddress);
-    } else {
-      return json({ error: 'Address not found' }, { status: 404 });
-    }
 
-    // Return the combined response
-    return json({ shippingAddress, eligibleDealers, cart });
+    console.log({  eligibleDealers, cart });
+    return json({  eligibleDealers, cart });
 
   } catch (error) {
     console.error('Error in loader:', error.message);
@@ -86,12 +122,14 @@ export const action = async ({ request, context }) => {
     isDefaultShipping: formData.get('isDefaultShipping') === 'on',
   };
 
-  // Save the data to KV storage
   try {
-    await context.env.cache.put(`shippingAddress`, JSON.stringify(addressData));
-    return redirect('/checkout/shipping'); // Redirect to the next step
+    // Simulate saving to a database or KV store (Cloudflare example)
+    console.log('Saving address data:', addressData);
+
+    // Return the addressData for display or further use
+    return json({ success: true, address: addressData });
   } catch (error) {
-    console.error('Error storing data in KV:', error);
-    return json({ error: 'Failed to save address data. Please try again.' }, { status: 500 });
+    console.error('Error storing data:', error);
+    return json({ success: false, error: 'Failed to save address data. Please try again.' }, { status: 500 });
   }
 };

@@ -81,7 +81,7 @@ const {token}=useOutletContext();
   }, [sdkReady, paymentMethod, cart?.total]); // Add cart.total as a dependency
 
   const handlePlaceOrder = async() => {
-    let shippingAddress = address;
+    let shippingAddress = JSON.parse(localStorage.getItem("shippingAddress"));
     const dealerData = JSON.parse(localStorage.getItem("dealerData"));
     const cartId = cart.id;
 
