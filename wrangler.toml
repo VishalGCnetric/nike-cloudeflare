@@ -1,18 +1,7 @@
-name = "nike-cloudeflare"
+name = "nike-cloudflare"
 main = "./server.ts"
-workers_dev = true
+compatibility_date = "2024-12-23"
 compatibility_flags = ["nodejs_compat"]
-
-compatibility_date = "2024-12-17"
-
-# Move KV namespace here
-kv_namespaces = [
-  { binding = "cache", id = "c6716a39b38746d7a87b221a719eeda3" }
- 
-]
-
-[assets]
-directory = "./build/client"
 
 [build]
 command = "npm run build"
@@ -20,5 +9,12 @@ command = "npm run build"
 [vars]
 REACT_APP_BASE_URL = "http://4.240.112.193:50102"
 
+[[kv_namespaces]]
+binding = "cache"
+id = "c6716a39b38746d7a87b221a719eeda3"
+
+[assets]
+directory = "./build/client"
+
 [env.production]
-compatibility_date = "2024-12-17"
+compatibility_date = "2024-12-23"
