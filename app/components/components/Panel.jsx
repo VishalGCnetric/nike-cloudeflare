@@ -1,5 +1,4 @@
-import React from 'react';
-
+import PropTypes from 'prop-types';
 export function Panel({
   children,
   header,
@@ -13,3 +12,11 @@ export function Panel({
     </div>
   );
 }
+
+
+// PropTypes for Panel component
+Panel.propTypes = {
+  children: PropTypes.node.isRequired, // Children content is required
+  header: PropTypes.node,               // Header can be any node (optional)
+  footer: PropTypes.node,               // Footer can be any node (optional)
+};

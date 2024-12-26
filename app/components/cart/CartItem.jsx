@@ -1,4 +1,4 @@
-import React from "react";
+import PropTypes from "prop-types";
 
 const CartItem = ({ item, onQuantityChange, onDelete }) => {
   return (
@@ -45,4 +45,26 @@ const CartItem = ({ item, onQuantityChange, onDelete }) => {
   );
 };
 
+// PropTypes for CartItem component
+CartItem.propTypes = {
+  item: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    quantity: PropTypes.number.isRequired,
+    productVariant: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      price: PropTypes.number.isRequired,
+      featuredAsset: PropTypes.shape({
+        url: PropTypes.string,
+      }),
+      images: PropTypes.arrayOf(
+        PropTypes.shape({
+          url: PropTypes.string,
+        })
+      ),
+    }).isRequired,
+    linePrice: PropTypes.number.isRequired,
+  }).isRequired,
+  onQuantityChange: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+};
 export default CartItem;

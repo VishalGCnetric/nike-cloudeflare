@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import  { createContext, useContext, useState } from 'react';
+import PropTypes from "prop-types";
 
 const AddressContext = createContext();
 
@@ -11,5 +12,8 @@ export const AddressProvider = ({ children }) => {
     </AddressContext.Provider>
   );
 };
-
+// Define prop types for AddressProvider
+AddressProvider.propTypes = {
+  children: PropTypes.node.isRequired, // children is a required node
+};
 export const useAddress = () => useContext(AddressContext);

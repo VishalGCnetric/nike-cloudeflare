@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-
+import PropTypes from 'prop-types';
 const Dropdown = ({ sections, onMouseEnter, onMouseLeave }) => {
   return (
     <div
@@ -31,5 +31,20 @@ const Dropdown = ({ sections, onMouseEnter, onMouseLeave }) => {
     </div>
   );
 };
+// Prop Types Validation
+Dropdown.propTypes = {
+  sections: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      items: PropTypes.arrayOf(PropTypes.string).isRequired,
+    })
+  ).isRequired,
+  onMouseEnter: PropTypes.func,
+  onMouseLeave: PropTypes.func,
+};
 
+Dropdown.defaultProps = {
+  onMouseEnter: () => {},
+  onMouseLeave: () => {},
+};
 export default Dropdown;

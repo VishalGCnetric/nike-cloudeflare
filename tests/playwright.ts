@@ -3,7 +3,7 @@ import { type ViteDevServer, createServer } from 'vite';
 import { type SetupServer, setupServer } from 'msw/node';
 import { type PlatformProxy, getPlatformProxy } from 'wrangler';
 
-interface TestFixtures {}
+// interface TestFixtures {}
 
 interface WorkerFixtures {
 	port: number;
@@ -20,7 +20,7 @@ export async function clearKV(namespace: KVNamespace): Promise<void> {
 
 export const expect = baseExpect.extend({});
 
-export const test = baseTest.extend<TestFixtures, WorkerFixtures>({
+export const test = baseTest.extend<any, WorkerFixtures>({
 	// Assign a unique "port" for each worker process
 	port: [
 		// eslint-disable-next-line no-empty-pattern

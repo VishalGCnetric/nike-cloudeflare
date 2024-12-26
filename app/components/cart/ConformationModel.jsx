@@ -1,5 +1,4 @@
-import React from 'react';
-
+import PropTypes from 'prop-types';
 const ConfirmationModal = ({ title, message, onConfirm, onCancel }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -25,4 +24,11 @@ const ConfirmationModal = ({ title, message, onConfirm, onCancel }) => {
   );
 };
 
+// PropTypes for ConfirmationModal component
+ConfirmationModal.propTypes = {
+  title: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
+  onConfirm: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+};
 export default ConfirmationModal;

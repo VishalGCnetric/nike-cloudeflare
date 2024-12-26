@@ -1,7 +1,7 @@
 const api = 'http://4.240.112.193:50102';
 // src/utils/api.js
 
-// const api = import.meta.env.REACT_APP_BASE_URL || "http://4.240.112.193:50102";
+const BaseApi = import.meta.env.REACT_APP_BASE_URL;
 
 /**
  * Fetch product by ID from the API.
@@ -212,3 +212,24 @@ export async function postRequest(endpoint, data) {
 export async function signup(userData) {
 	return await postRequest('/signup', userData);
 }
+export const fetchcontent = async () => {
+	console.log(BaseApi, 'baseapi');
+	try {
+		const response = await fetch(`${api}/content`);
+
+		if (!response.ok) {
+			throw new Error(`Error fetching content: ${response.statusText}`);
+		}
+
+		const product = await response.json();
+
+		if (!product) {
+			throw new Error('content is missing from api');
+		}
+
+		return product;
+	} catch (error) {
+		console.error('API Error:', error.message);
+		throw error;
+	}
+};

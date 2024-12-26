@@ -1,6 +1,5 @@
-import React from 'react';
 import { useInstantSearch } from 'react-instantsearch';
-
+import PropTypes from 'prop-types'; // Import PropTypes
 import { formatNumber } from '../../utils/format';
 
 export function SaveFiltersMobile({ onClick }) {
@@ -13,3 +12,7 @@ export function SaveFiltersMobile({ onClick }) {
     </button>
   );
 }
+// Define prop types for SaveFiltersMobile
+SaveFiltersMobile.propTypes = {
+  onClick: PropTypes.func.isRequired, // onClick is a required function
+};

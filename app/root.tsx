@@ -1,7 +1,5 @@
 import {
-	createCookie,
 	type LinksFunction,
-	type LoaderFunctionArgs,
 	type MetaFunction,
 	type ActionFunctionArgs,
 } from '@remix-run/cloudflare';
@@ -20,6 +18,7 @@ import {
 import stylesUrl from '~/styles.css?url';
 import { ErrorLayout, Layout } from './layout';
 import { commitSession, getSession } from './utils/cookies';
+
 export const links: LinksFunction = () => {
 	return [{ rel: 'stylesheet', href: stylesUrl }];
 };
@@ -32,22 +31,21 @@ export const meta: MetaFunction = () => {
 	];
 };
 
-// Create cookies to retrieve the token and user
+// Define the interface for loader data
+interface LoaderData {
+	token: string | null;
+}
 
-// loader function
-export async function loader({ request }: { request: any }) {
+// Loader function
+export async function loader({
+	request,
+}: {
+	request: Request;
+}): Promise<LoaderData> {
 	const cookieHeader = request.headers.get('Cookie') || '';
 	const session = await getSession(cookieHeader);
 	const token = session.get('token'); // Replace 'userId' with the key you use for the token
 	console.log(token, 'root');
-	// if (!token) {
-	//   return json(
-	// 	{ error: "Unauthorized" },
-	// 	{
-	// 	  status: 401,
-	// 	}
-	//   );
-	// }
 
 	return json({
 		token,
@@ -72,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function App() {
-	const { token } = useLoaderData<typeof loader>();
+	const { token } = useLoaderData<LoaderData>();
 
 	return (
 		<Document>

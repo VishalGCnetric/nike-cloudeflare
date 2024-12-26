@@ -1,4 +1,3 @@
-import React from 'react';
 import { useInstantSearch } from 'react-instantsearch';
 
 import { formatNumber } from '../../utils/format';

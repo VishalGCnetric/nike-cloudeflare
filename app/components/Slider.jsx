@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react';
+import  { useRef } from 'react';
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
+import PropTypes from 'prop-types';
 // const shoes = [
 //     {
 //         name: 'Nike Vaporfly 3 Electric',
@@ -89,5 +89,14 @@ const PopularShoes = ({data}) => {
         </div>
     );
 };
-
+// Define PropTypes for the component
+PopularShoes.propTypes = {
+    data: PropTypes.arrayOf(
+        PropTypes.shape({
+            url: PropTypes.string.isRequired,
+            title: PropTypes.string.isRequired,
+            // Add any other properties of the shoe object you expect
+        })
+    ).isRequired,
+};
 export default PopularShoes;

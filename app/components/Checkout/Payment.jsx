@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import  { useState, useEffect, useRef } from "react";
 import { FaStripe } from "react-icons/fa6"; // Importing Stripe icon
 import CheckoutSuccessModal from "./CheckoutSuccessModel";
 import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
@@ -7,13 +6,13 @@ import { checkout } from "../../utils/api";
 
 const PaymentForm = () => {
   const navigate = useNavigate();
-const {cart,address}=useLoaderData();
+const {cart}=useLoaderData();
 const {token}=useOutletContext();
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [isModalVisible, setModalVisible] = useState(false);
   const [datas, setData] = useState(null);
   const [sdkReady, setSdkReady] = useState(false);
-  const paypalCardRef = useRef(null);
+  // const paypalCardRef = useRef(null);
   const paypalRef = useRef(null);
   
   useEffect(() => {
@@ -113,7 +112,7 @@ console.log(data)
 
   };
 
-  const handlePayPalSuccess = (details, data) => {
+  const handlePayPalSuccess = (details) => {
     console.log("Payment Successful:", details);
     handlePlaceOrder();
   };
@@ -307,9 +306,9 @@ console.log(data)
 
       <p className="text-xs text-gray-500 mt-6">
         By clicking Place Order, you agree to the{" "}
-        <a href="#" className="text-blue-500">
+        <p className="text-blue-500">
           Terms and Conditions
-        </a>
+        </p>
         .
       </p>
 

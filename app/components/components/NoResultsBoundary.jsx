@@ -1,6 +1,5 @@
-import React from 'react';
 import { useInstantSearch } from 'react-instantsearch';
-
+import PropTypes from 'prop-types';
 export function NoResultsBoundary({
   children,
   fallback,
@@ -20,3 +19,8 @@ export function NoResultsBoundary({
 
   return <>{children}</>;
 }
+// PropTypes for NoResultsBoundary component
+NoResultsBoundary.propTypes = {
+  children: PropTypes.node.isRequired, // Ensure children are passed
+  fallback: PropTypes.node.isRequired,  // Ensure fallback is passed
+};

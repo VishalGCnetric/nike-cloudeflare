@@ -327,7 +327,7 @@
 //     </>
 //   );
 // }
-import React, { useEffect, useRef, useState } from "react";
+import  { useEffect, useRef, useState } from "react";
 import algoliasearch from "algoliasearch/lite";
 import {
   Configure,

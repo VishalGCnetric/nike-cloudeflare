@@ -1,6 +1,5 @@
-import React from 'react';
 import { useClearRefinements } from 'react-instantsearch';
-
+import PropTypes from 'prop-types';
 export function ClearFiltersMobile({
   containerRef,
 }) {
@@ -20,3 +19,9 @@ export function ClearFiltersMobile({
     </div>
   );
 }
+// PropTypes for ClearFiltersMobile component
+ClearFiltersMobile.propTypes = {
+  containerRef: PropTypes.shape({
+    current: PropTypes.instanceOf(Element),
+  }).isRequired,
+};

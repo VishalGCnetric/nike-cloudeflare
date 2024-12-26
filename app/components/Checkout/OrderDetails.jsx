@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 
 import DeliveryInformation from './DeliveryInformation';
 
@@ -13,18 +12,7 @@ const sharedClasses = {
     button: 'w-full bg-black text-white p-2 rounded-lg hover:bg-zinc-800',
 };
 
-const initialShops = [
-    { name: 'Shop 1', lat: 18.2591827, lng: 76.1773209, product: 'Product 1', productID: 'P001' },
-    { name: 'Shop 2', lat: 18.563636, lng: 76.214588, product: 'Product 2', productID: 'P002' },
-    { name: 'Shop 3', lat: 18.409984, lng: 76.577656, product: 'Product 3', productID: 'P003' },
-    { name: 'Shop 4', lat: 18.270430, lng: 76.256743, product: 'Product 4', productID: 'P004' },
-    { name: 'Shop 5', lat: 18.380173, lng: 76.731065, product: 'Product 1', productID: 'P001' },
-    { name: 'Shop 6', lat: 17.885044, lng: 76.586671, product: 'Product 2', productID: 'P002' },
-    { name: 'Shop 7', lat: 18.545800, lng: 76.288155, product: 'Product 3', productID: 'P003' },
-    { name: 'Shop 8', lat: 18.034805, lng: 76.425833, product: 'Product 4', productID: 'P004' },
-    { name: 'Shop 9', lat: 18.318330, lng: 76.478090, product: 'Product 1', productID: 'P001' },
-    { name: 'Shop 10', lat: 18.599326, lng: 76.623996, product: 'Product 2', productID: 'P002' },
-  ];
+
 
 const OrderDetails = () => {
    const {shippingAddress}=useLoaderData();

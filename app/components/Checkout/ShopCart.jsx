@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 
 const ShopCart = ({ shop, onClick }) => {
@@ -7,11 +8,18 @@ const ShopCart = ({ shop, onClick }) => {
   // Static Map Image URL with better zoom level for visible location details
   const staticMapUrl = `https://static-maps.yandex.ru/1.x/?lang=en-US&ll=${lng},${lat}&z=8&l=map&size=400,200&pt=${lng},${lat},pm2rdl`; 
 
-
   return (
-    <div
-      className="border border-gray-200 p-6 rounded-lg shadow-md mb-8 transform transition duration-300 hover:scale-105 hover:shadow-xl cursor-pointer"
+    <button
+      type="button"
+      className="border border-gray-200 p-6 rounded-lg shadow-md mb-8 transform transition duration-300 hover:scale-105 hover:shadow-xl"
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onClick();
+        }
+      }}
+      role="button"
+      tabIndex={0} // Make it focusable
     >
       <div className="flex flex-row items-start justify-between space-x-4">
         {/* Static Map Section */}
@@ -46,8 +54,23 @@ const ShopCart = ({ shop, onClick }) => {
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
+};
+
+// PropTypes validation
+ShopCart.propTypes = {
+  shop: PropTypes.shape({
+    coordinates: PropTypes.shape({
+      lat: PropTypes.number.isRequired,
+      lng: PropTypes.number.isRequired,
+    }).isRequired,
+    sellerName: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    distance: PropTypes.number.isRequired,
+    mapLink: PropTypes.string.isRequired,
+  }).isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default ShopCart;

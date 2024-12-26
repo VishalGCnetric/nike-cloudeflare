@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { json, useLoaderData, Link, useOutletContext } from '@remix-run/react';
 import { getCart, deleteFromCart, updateCartQuantity } from '../utils/cartutils';
 import CartItem from '../components/cart/CartItem';

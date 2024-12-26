@@ -1,7 +1,7 @@
-import React from "react";
 import { useNavigate } from "@remix-run/react";
 import DeliveryInformation from "./DeliveryInformation";
-import ShopCart from "./ShopCart";
+import { lazy } from "react";
+const ShopCart = lazy(() => import("./ShopCart"));
 
 // Shared Tailwind CSS classes
 const twClasses = {

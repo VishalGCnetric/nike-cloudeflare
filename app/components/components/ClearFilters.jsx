@@ -1,4 +1,3 @@
-import React from 'react';
 import { useClearRefinements } from 'react-instantsearch';
 
 export function ClearFilters() {

@@ -1,38 +1,37 @@
 import { useLoaderData } from "@remix-run/react";
-import React from "react";
 
 const cardClass = "w-full p-8 bg-white shadow-md rounded-md";
 const flexClass = "flex justify-between";
 const itemClass = "text-sm";
 
-const dummyCart = {
-  subtotal: 2000,
-  shipping: 150,
-  total: 2150,
-  arrivesDate: "Dec 15, 2024",
-  lines: [
-    {
-      id: "1",
-      productVariant: {
-        name: "Product A",
-        images: [{ url: "https://via.placeholder.com/100" }],
-      },
-      size: "M",
-      quantity: 2,
-      linePrice: 1000,
-    },
-    {
-      id: "2",
-      productVariant: {
-        name: "Product B",
-        images: [{ url: "https://via.placeholder.com/100" }],
-      },
-      size: "L",
-      quantity: 1,
-      linePrice: 1150,
-    },
-  ],
-};
+// const dummyCart = {
+//   subtotal: 2000,
+//   shipping: 150,
+//   total: 2150,
+//   arrivesDate: "Dec 15, 2024",
+//   lines: [
+//     {
+//       id: "1",
+//       productVariant: {
+//         name: "Product A",
+//         images: [{ url: "https://via.placeholder.com/100" }],
+//       },
+//       size: "M",
+//       quantity: 2,
+//       linePrice: 1000,
+//     },
+//     {
+//       id: "2",
+//       productVariant: {
+//         name: "Product B",
+//         images: [{ url: "https://via.placeholder.com/100" }],
+//       },
+//       size: "L",
+//       quantity: 1,
+//       linePrice: 1150,
+//     },
+//   ],
+// };
 
 const OrderSummary = () => {
   // Use loader data if cartData prop is not provided

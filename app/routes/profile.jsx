@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from '@remix-run/react';
 import { json } from '@remix-run/node';
-import ShoppingLoader from '../components/Loader/ShoppingLoader';
+
 import { getSession } from '../utils/cookies';
 import { getUserDetails } from '../utils/api'; // Uncomment if API utility is implemented
 

@@ -1,5 +1,3 @@
-import React from 'react'
-import algoliasearch from "algoliasearch";
 import App from '../components/AlgoliaApp';
 
 // export const loader = async () => {

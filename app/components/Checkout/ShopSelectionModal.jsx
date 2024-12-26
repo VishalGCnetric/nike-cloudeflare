@@ -1,9 +1,9 @@
 import React, { lazy, useEffect, useState } from "react";
 import axios from "axios";
+import PropTypes from "prop-types";
 import FindingDealerLoader from "../Loader/FindingDealerLoader";
 import ShopCartList from "./ShopCartList";
 import { Modal } from "@mui/material";
-// import Maps from "./Maps";
 
 const Maps = lazy(() => import("./Maps"));
 
@@ -13,7 +13,6 @@ const ShopSelectionModal = ({
   onClose,
   coordinates,
   nearbyShops = [],
-  onSelectShop,
   isLoading,
   deliveryType,
 }) => {
@@ -73,18 +72,38 @@ const ShopSelectionModal = ({
 
             {/* Right side: List of shops */}
             <div className="w-full sm:w-1/2 pl-0 sm:pl-6 overflow-y-auto max-h-96">
-              <ShopCartList
-                shop={nearbyShops}
-                deliveryType={deliveryType}
-                setSelectedOption={setSelectedOption}
-                onClose={onClose}
-              />
+              {error ? (
+                <div className="text-red-600">
+                  Unable to fetch address. Please try again later.
+                </div>
+              ) : (
+                <ShopCartList
+                  shop={nearbyShops}
+                  deliveryType={deliveryType}
+                  setSelectedOption={setSelectedOption}
+                  onClose={onClose}
+                />
+              )}
             </div>
           </div>
         )}
       </div>
     </Modal>
   );
+};
+
+// PropTypes validation
+ShopSelectionModal.propTypes = {
+  setSelectedOption: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  coordinates: PropTypes.shape({
+    lat: PropTypes.number.isRequired,
+    lng: PropTypes.number.isRequired,
+  }),
+  nearbyShops: PropTypes.array,
+  isLoading: PropTypes.bool.isRequired,
+  deliveryType: PropTypes.string.isRequired,
 };
 
 export default ShopSelectionModal;

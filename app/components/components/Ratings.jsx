@@ -1,7 +1,6 @@
-import React from "react";
 import { useConnector } from "react-instantsearch";
 import { connectRatingMenu } from "instantsearch.js/es/connectors";
-
+import PropTypes from 'prop-types'; // Import PropTypes
 
 import { cx } from "../../utils/format";
 
@@ -65,3 +64,7 @@ export function Ratings({ attribute }) {
     </div>
   );
 }
+// Define prop types for Ratings
+Ratings.propTypes = {
+  attribute: PropTypes.string.isRequired,
+};

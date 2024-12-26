@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaBars, FaRegHeart, FaUser } from "react-icons/fa";
 import { BsCart } from "react-icons/bs";
 import { GoSearch } from "react-icons/go";
@@ -12,12 +12,11 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // Get current route
- const {token}=useLoaderData();
+  const { token } = useLoaderData();
 
- const handleLogout = () => {
-  
- };
- 
+  const handleLogout = () => {
+    // Perform logout logic here
+  };
 
   return (
     <header className="bg-white shadow-sm">
@@ -29,22 +28,24 @@ const Navbar = () => {
           <Link className="text-muted-foreground hover:text-primary">Help</Link>
           
           {token ? (
-        
-            <Form method="post" >
-            <button
-              type="submit"
-              className=" text-black w-10 rounded"
-            >
-              Logout
-            </button>
-          </Form>
-          ) : (<><Link className="text-muted-foreground hover:text-primary">Join Us</Link>
-            <Link
-              to="/login"
-              className="bg-secondary text-secondary-foreground hover:bg-secondary/80  rounded"
-            >
-              Sign In
-            </Link></>
+            <Form method="post" onSubmit={handleLogout}>
+              <button
+                type="submit"
+                className="text-black w-10 rounded"
+              >
+                Logout
+              </button>
+            </Form>
+          ) : (
+            <>
+              <Link className="text-muted-foreground hover:text-primary">Join Us</Link>
+              <Link
+                to="/login"
+                className="bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded"
+              >
+                Sign In
+              </Link>
+            </>
           )}
         </div>
       </nav>
@@ -53,6 +54,9 @@ const Navbar = () => {
         <div
           onClick={() => navigate("/")}
           className="flex items-center cursor-pointer space-x-4"
+          role="button"
+          tabIndex={0}
+          onKeyPress={(e) => (e.key === 'Enter' ? navigate("/") : null)} // Keyboard support
         >
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"
@@ -68,6 +72,9 @@ const Navbar = () => {
                 className="text-gray-800 cursor-pointer hover:text-gray-500 transition duration-150"
                 onMouseEnter={() => setOpenDropdown(el.name)}
                 onMouseLeave={() => setOpenDropdown(null)}
+                role="button"
+                tabIndex={0}
+                onKeyPress={(e) => (e.key === 'Enter' ? setOpenDropdown(el.name) : null)} // Keyboard support
               >
                 {el.name}
               </div>
@@ -131,12 +138,12 @@ const Navbar = () => {
           <nav className="space-y-4">
             {Lists.map((item, index) => (
               <div key={index}>
-                <a
-                  href="#"
+                <Link
+                  to="#" // Consider changing this to a valid route
                   className="block text-gray-800 hover:text-gray-500 transition duration-150"
                 >
                   {item.name}
-                </a>
+                </Link>
               </div>
             ))}
           </nav>

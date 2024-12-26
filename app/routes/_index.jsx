@@ -1,16 +1,13 @@
-import { json, useLoaderData } from '@remix-run/react';
-import Slider from "../components/Slider";
-import { lazy, Suspense } from 'react';
+import { json, useLoaderData } from "@remix-run/react";
+// import Slider from "../components/Slider";
+import { lazy, Suspense } from "react";
+import { fetchcontent } from "../utils/api";
 
-const SlickSliderComponent = lazy(() => import("../components/Swaper"));
+// const SlickSliderComponent = lazy(() => import("../components/Swaper"));
 
 export async function loader() {
-  const api = process.env.REACT_APP_BASE_URL || "http://4.240.112.193:50102";
-
   try {
-    const response = await fetch(`${api}/content`);
-    const data = await response.json();
-
+    const data = await fetchcontent();
     return json({ data });
   } catch (err) {
     console.error(err);
@@ -21,10 +18,18 @@ export async function loader() {
 const Homepage = () => {
   const { data, error } = useLoaderData();
 
-  const popularProductSliders = data?.filter(image => image.title.includes("popular product slider"));
-  const thepopularSpotlight = data?.filter(image => image.title.includes("the popular spotlight"));
-  const mainImage = data?.filter(image => image.title.includes("main banner"));
-  const latestImage = data?.filter(image => image.title.includes("the latest"));
+  const popularProductSliders = data?.filter((image) =>
+    image.title.includes("popular product slider")
+  );
+  const thepopularSpotlight = data?.filter((image) =>
+    image.title.includes("the popular spotlight")
+  );
+  const mainImage = data?.filter((image) =>
+    image.title.includes("main banner")
+  );
+  const latestImage = data?.filter((image) =>
+    image.title.includes("the latest")
+  );
 
   if (error) {
     return (
@@ -63,60 +68,36 @@ const Homepage = () => {
         </div>
       </div>
 
-      <Slider data={popularProductSliders} />
+      {/* <Slider data={popularProductSliders} /> */}
 
       <div>
         <Suspense fallback={<div className="loader">Loading...</div>}>
-          <SlickSliderComponent data={thepopularSpotlight} />
+          {/* <SlickSliderComponent data={thepopularSpotlight} /> */}
         </Suspense>
       </div>
 
       <div className="w-full mx-auto px-2 py-8">
         <h2 className="text-3xl font-bold mb-6">The Latest</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {/* Cards here */}
-             {/* Card 1 */}
-             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105">
-            <img
-              src={latestImage?.[0]?.url}
-              alt="Nike Zenvy Collection"
-              className="w-full h-full object-cover"
-            />
-            <div className="p-4">
-              <h3 className="text-xl font-semibold mb-2">
-                Nike Zenvy Collection
-              </h3>
-              <a href="#" className="text-primary hover:underline">
-                Shop Now
-              </a>
+          {/* Card */}
+          {latestImage?.map((item, index) => (
+            <div
+              key={index}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105"
+            >
+              <img
+                src={item?.url}
+                alt={item?.title || "Product"}
+                className="w-full h-full object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-xl font-semibold mb-2">{item?.title}</h3>
+                <button className="text-primary hover:underline">
+                  Shop Now
+                </button>
+              </div>
             </div>
-          </div>
-
-          {/* Card 2 */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105">
-            <img
-              src={latestImage?.[1]?.url}
-              alt="Kylian Mbappé Mercurial"
-              className="w-full h-full object-cover"
-            />
-            <div className="p-4">
-              <h3 className="text-xl font-semibold mb-2">
-                Kylian Mbappé Mercurial
-              </h3>
-              <a href="#" className="text-primary hover:underline">
-                Shop Now
-              </a>
-            </div>
-          </div>
-
-          {/* Card 3 */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105">
-            <img
-              src={latestImage?.[2]?.url}
-              alt="Train Like LeBron in the TR1"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          ))}
         </div>
       </div>
     </div>

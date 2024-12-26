@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import  { useEffect, useRef } from 'react';
 import { useInstantSearch } from 'react-instantsearch';
-
+import PropTypes from 'prop-types'; // Import PropTypes
 export function ScrollTo({ children }) {
   const { addMiddlewares } = useInstantSearch();
   const containerRef = useRef(null);
@@ -36,3 +36,6 @@ export function ScrollTo({ children }) {
     </div>
   );
 }
+ScrollTo.propTypes = {
+  children: PropTypes.node.isRequired, // children is a required node
+};

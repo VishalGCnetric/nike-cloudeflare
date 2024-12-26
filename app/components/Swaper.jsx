@@ -1,9 +1,9 @@
-import React, { useRef } from 'react';
+import  { useRef } from 'react';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from "react-slick"
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
-
+import PropTypes from 'prop-types';
 const SlickSliderComponent = ({ data }) => {
   const sliderRef = useRef(null);
 
@@ -86,5 +86,14 @@ const SlickSliderComponent = ({ data }) => {
     </div>
   );
 };
-
+// Define PropTypes for the component
+SlickSliderComponent.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      url: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      // Add any other properties that might be present in the item
+    })
+  ).isRequired,
+};
 export default SlickSliderComponent;
