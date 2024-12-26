@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 
@@ -18,7 +17,6 @@ const ShopCart = ({ shop, onClick }) => {
           onClick();
         }
       }}
-      role="button"
       tabIndex={0} // Make it focusable
     >
       <div className="flex flex-row items-start justify-between space-x-4">

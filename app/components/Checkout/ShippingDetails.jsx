@@ -9,7 +9,7 @@ export default function ShippingDetails() {
   const navigate = useNavigate();
   const { shippingAddress, eligibleDealers } = useLoaderData();
   const [showShippingPopup, setShowShippingPopup] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [shippingCoordinates, setShippingCoordinates] = useState(null);
   const [locationGranted, setLocationGranted] = useState(false);
   const [browserCoordinates, setBrowserCoordinates] = useState(null);
@@ -18,7 +18,7 @@ export default function ShippingDetails() {
   const [selectedShop, setSelectedShop] = useState(null);
   const [nearbyShops, setNearbyShops] = useState([]);
   // const [error, setError] = useState(''); // This variable is set but not used. Consider using it for displaying errors.
-
+console.log(selectedShop,shippingCoordinates)
   useEffect(() => {
     const geoOptions = {
       enableHighAccuracy: true,
@@ -205,7 +205,7 @@ export default function ShippingDetails() {
           coordinates={browserCoordinates}
           nearbyShops={nearbyShops}
           onSelectShop={handleShopSelection}
-          isLoading={isLoading}
+          // isLoading={isLoading}
           deliveryType={selectedOption}
         />
       )}

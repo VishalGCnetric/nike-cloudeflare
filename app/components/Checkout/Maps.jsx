@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import  {  useEffect, useRef } from 'react';
 import {
   MapContainer,
   TileLayer,
@@ -8,7 +8,7 @@ import {
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import axios from 'axios';
+// import axios from 'axios';
 import PropTypes from 'prop-types';
 
 // Custom icon for user location (red icon)
@@ -50,17 +50,17 @@ L.Icon.Default.mergeOptions({
 });
 
 const Maps = ({ currentLocation, nearbyShops }) => {
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
   const markersRef = useRef({});
-  
+  const error=null;
   useEffect(() => {
     // Reverse geocode to get the address from coordinates
-    if (currentLocation) {
-      axios
-        .get(`https://nominatim.openstreetmap.org/reverse?lat=${currentLocation.lat}&lon=${currentLocation.lng}&format=json`)
-        .then((res) => setAddress(res.data.display_name))
-        .catch(() => setError('Unable to fetch address'));
-    }
+    // if (currentLocation) {
+    //   axios
+    //     .get(`https://nominatim.openstreetmap.org/reverse?lat=${currentLocation.lat}&lon=${currentLocation.lng}&format=json`)
+    //     .then((res) => setAddress(res.data.display_name))
+    //     .catch(() => setError('Unable to fetch address'));
+    // }
   }, [currentLocation]);
 
   // Function to auto-open tooltips when zoom level is high enough

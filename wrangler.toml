@@ -18,6 +18,8 @@ command = "npm run build"
 
 [vars]
 REACT_APP_BASE_URL = "http://4.240.112.193:50102"
+pages_build_output_dir = "./public"
 
 [env.production]
 compatibility_date = "2024-11-06"
+

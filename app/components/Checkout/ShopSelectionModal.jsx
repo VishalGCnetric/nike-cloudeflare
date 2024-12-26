@@ -1,5 +1,4 @@
 import React, { lazy, useEffect, useState } from "react";
-import axios from "axios";
 import PropTypes from "prop-types";
 import FindingDealerLoader from "../Loader/FindingDealerLoader";
 import ShopCartList from "./ShopCartList";
@@ -16,28 +15,28 @@ const ShopSelectionModal = ({
   isLoading,
   deliveryType,
 }) => {
-  const [address, setAddress] = useState("");
-  const [error, setError] = useState(false);
+  // const [address, setAddress] = useState("");
+  // const [error, setError] = useState(false);
   const [showMap, setShowMap] = useState(false);
-
+const error=false;
   // Fetch address based on coordinates
-  useEffect(() => {
-    const fetchAddress = async () => {
-      if (coordinates && isOpen) {
-        try {
-          setError(false);
-          const response = await axios.get(
-            `https://nominatim.openstreetmap.org/reverse?lat=${coordinates.lat}&lon=${coordinates.lng}&format=json`
-          );
-          setAddress(response.data.display_name || "Address not available");
-        } catch {
-          setError(true);
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchAddress = async () => {
+  //     if (coordinates && isOpen) {
+  //       try {
+  //         setError(false);
+  //         const response = await axios.get(
+  //           `https://nominatim.openstreetmap.org/reverse?lat=${coordinates.lat}&lon=${coordinates.lng}&format=json`
+  //         );
+  //         setAddress(response.data.display_name || "Address not available");
+  //       } catch {
+  //         setError(true);
+  //       }
+  //     }
+  //   };
 
-    fetchAddress();
-  }, [coordinates, isOpen]);
+  //   fetchAddress();
+  // }, [coordinates, isOpen]);
 
   // Trigger map rendering only after modal is open
   useEffect(() => {

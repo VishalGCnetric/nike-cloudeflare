@@ -1,7 +1,8 @@
-import React, { useState, lazy } from "react";
+import { useState, lazy } from "react";
 import PropTypes from "prop-types";
-import {  ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { useNavigate } from "@remix-run/react";
+
 const ShopCart = lazy(() => import("./ShopCart"));
 
 const ShopCartList = ({ shop, deliveryType, onClose, setSelectedOption }) => {
@@ -93,7 +94,7 @@ const ShopCartList = ({ shop, deliveryType, onClose, setSelectedOption }) => {
 
       {shop.length === 0 ? (
         <div className="text-gray-600 border border-red-500 p-2 m-2">
-          No nearby sellers for this cart items.<br/> Choose 'Ship to my address' to continue.
+          No nearby sellers for this cart items.<br /> Choose &apos;Ship to my address&apos; to continue.
         </div>
       ) : (
         <>
@@ -129,7 +130,7 @@ const ShopCartList = ({ shop, deliveryType, onClose, setSelectedOption }) => {
                     ))
                 ) : (
                   <div className="text-red-600 border border-red-500 rounded p-2 m-2">
-                    No nearby sellers for this item.<br/>Either remove this item from cart <br/> OR <br/>Choose 'Ship to my address' to continue.
+                    No nearby sellers for this item.<br />Either remove this item from cart <br /> OR <br />Choose &apos;Ship to my address&apos; to continue.
                   </div>
                 )}
               </div>

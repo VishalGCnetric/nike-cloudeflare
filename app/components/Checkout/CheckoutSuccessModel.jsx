@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"; // Import React
+import  { useEffect } from "react"; // Import React
 import PropTypes from "prop-types"; // Import PropTypes
 import { motion } from "framer-motion";
 import { useNavigate } from "@remix-run/react";

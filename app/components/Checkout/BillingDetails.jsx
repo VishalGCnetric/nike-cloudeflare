@@ -59,7 +59,7 @@ const BillingComponent = () => {
   // Show normal UI if no data is available
   return (
     <div className={twClasses.container}>
-      <h2 className={twClasses.header}>What's your billing address?</h2>
+      <h2 className={twClasses.header}>What&apos;s your billing address?</h2>
       <div className="flex items-center my-4">
         <input
           type="checkbox"

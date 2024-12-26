@@ -1,6 +1,6 @@
-import {   Form } from "@remix-run/react";
-import { useState } from "react";
-import Modal from "./Modal"; // Your custom modal component
+// import {   Form } from "@remix-run/react";
+// import { useState } from "react";
+// import Modal from "./Modal"; // Your custom modal component
 
 // Dummy data for shipping address
 const dummyData = {
@@ -19,7 +19,7 @@ const dummyData = {
 export default function DeliveryInformation() {
   // const { shippingAddress } = useLoaderData() || {}; // Ensure we safely destructure
   const shippingAddress=JSON.parse(localStorage.getItem("shippingAddress"))||{};
-  const [isModalOpen, setModalOpen] = useState(false);
+  // const [isModalOpen, setModalOpen] = useState(false);
 console.log(shippingAddress)
   // Use updated address from action, or loader data as fallback
   const address = shippingAddress || dummyData;
@@ -36,7 +36,7 @@ console.log(shippingAddress)
               {`${address.firstName} ${address.lastName}`}
             </p>
             <button
-              onClick={() => setModalOpen(true)}
+              // onClick={() => setModalOpen(true)}
               className="flex items-center text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
             >
               Edit
@@ -56,7 +56,7 @@ console.log(shippingAddress)
         <div>
           <p className="text-zinc-500 dark:text-zinc-400">No address added yet.</p>
           <button
-            onClick={() => setModalOpen(true)}
+            // onClick={() => setModalOpen(true)}
             className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
           >
             Add Address
@@ -64,7 +64,7 @@ console.log(shippingAddress)
         </div>
       )}
 
-      {/* Modal for editing address */}
+      {/* Modal for editing address
       {isModalOpen && (
         <Modal onClose={() => setModalOpen(false)}>
           <Form method="post" className="p-6 bg-white dark:bg-gray-800">
@@ -101,7 +101,7 @@ console.log(shippingAddress)
             </button>
           </Form>
         </Modal>
-      )}
+      )} */}
     </div>
   );
 }

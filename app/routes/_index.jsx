@@ -1,6 +1,6 @@
 import { json, useLoaderData } from "@remix-run/react";
 // import Slider from "../components/Slider";
-import { lazy, Suspense } from "react";
+import {  Suspense } from "react";
 import { fetchcontent } from "../utils/api";
 
 // const SlickSliderComponent = lazy(() => import("../components/Swaper"));
@@ -18,12 +18,12 @@ export async function loader() {
 const Homepage = () => {
   const { data, error } = useLoaderData();
 
-  const popularProductSliders = data?.filter((image) =>
-    image.title.includes("popular product slider")
-  );
-  const thepopularSpotlight = data?.filter((image) =>
-    image.title.includes("the popular spotlight")
-  );
+  // const popularProductSliders = data?.filter((image) =>
+  //   image.title.includes("popular product slider")
+  // );
+  // const thepopularSpotlight = data?.filter((image) =>
+  //   image.title.includes("the popular spotlight")
+  // );
   const mainImage = data?.filter((image) =>
     image.title.includes("main banner")
   );
