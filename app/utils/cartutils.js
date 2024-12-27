@@ -1,6 +1,6 @@
 // utils/cartUtils.js
 
-const BASE_URL = 'http://4.240.112.193:50102/cart';
+const BASE_URL = 'https://composer.nike.universalcommerce.io/cart';
 
 const getHeaders = token => {
 	return {
@@ -64,14 +64,17 @@ export const deleteFromCart = async (token, lineId) => {
 
 // utils/cartutils.js
 export const addToCart = async (productVariantId, quantity, token) => {
-	const response = await fetch('http://4.240.112.193:50102/cart', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			accesstoken: token, // Include your access token if required
+	const response = await fetch(
+		'https://composer.nike.universalcommerce.io/cart',
+		{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				accesstoken: token, // Include your access token if required
+			},
+			body: JSON.stringify({ productVariantId, quantity }),
 		},
-		body: JSON.stringify({ productVariantId, quantity }),
-	});
+	);
 
 	if (!response.ok) {
 		throw new Error('Failed to add item to cart');

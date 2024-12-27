@@ -3,22 +3,20 @@ import { useLoaderData, useNavigate } from '@remix-run/react';
 import ShopSelectionModal from './ShopSelectionModal';
 import { toast } from 'react-toastify';
 import { Button, Modal } from '@mui/material';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
 
 export default function ShippingDetails() {
   const navigate = useNavigate();
   const { shippingAddress, eligibleDealers } = useLoaderData();
   const [showShippingPopup, setShowShippingPopup] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
-  const [shippingCoordinates, setShippingCoordinates] = useState(null);
   const [locationGranted, setLocationGranted] = useState(false);
   const [browserCoordinates, setBrowserCoordinates] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('shipping');
-  const [selectedShop, setSelectedShop] = useState(null);
   const [nearbyShops, setNearbyShops] = useState([]);
-  // const [error, setError] = useState(''); // This variable is set but not used. Consider using it for displaying errors.
-console.log(selectedShop,shippingCoordinates)
+  const [loading, setLoading] = useState(false);
+
+  // Get browser coordinates on mount
   useEffect(() => {
     const geoOptions = {
       enableHighAccuracy: true,
@@ -26,63 +24,68 @@ console.log(selectedShop,shippingCoordinates)
       maximumAge: 0,
     };
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocationGranted(true);
-        setBrowserCoordinates({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
-      },
-      (error) => {
-        setLocationGranted(false);
-        console.error('Geolocation error:', error);
-      },
-      geoOptions
-    );
+    const getCurrentLocation = () => {
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocationGranted(true);
+          setBrowserCoordinates({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+          setLoading(false);
+        },
+        (error) => {
+          setLocationGranted(false);
+          console.error('Geolocation error:', error.message);
+          setLoading(false);
+        },
+        geoOptions
+      );
+    };
+
+    getCurrentLocation();
   }, []);
 
+  // Calculate distance between two points
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; 
+    const R = 6371; // Earth's radius in kilometers
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   };
 
   const deg2rad = (deg) => deg * (Math.PI / 180);
 
+  // Filter nearby shops when modal is open
   useEffect(() => {
     if (browserCoordinates && isModalOpen) {
       const shopsWithin50km = eligibleDealers.reduce((acc, variant) => {
         const nearbySellers = variant.sellers
           .map((seller) => {
-            if (!seller.coordinates) {
-              console.warn('Seller coordinates not defined:', seller);
-              return null;
-            }
+            if (!seller.coordinates) return null;
+            const distance = calculateDistance(
+              browserCoordinates.lat,
+              browserCoordinates.lng,
+              seller.coordinates.lat,
+              seller.coordinates.lng
+            );
             return {
               ...seller,
-              distance: calculateDistance(
-                browserCoordinates.lat,
-                browserCoordinates.lng,
-                seller.coordinates.lat,
-                seller.coordinates.lng
-              ),
+              distance,
             };
           })
           .filter(Boolean)
           .filter((seller) => seller.distance <= 50);
 
         if (nearbySellers.length > 0) {
-          acc.push({
-            ...variant,
-            sellers: nearbySellers,
-          });
+          acc.push({ ...variant, sellers: nearbySellers });
         }
         return acc;
       }, []);
@@ -103,7 +106,8 @@ console.log(selectedShop,shippingCoordinates)
         }
         return false;
       } catch (error) {
-        console.error('Error fetching geocode:', error);
+        console.error('Geocoding error:', error.message);
+        toast.error('Geocoding failed. Please try again later.');
         return false;
       }
     };
@@ -111,12 +115,11 @@ console.log(selectedShop,shippingCoordinates)
     const geocodePriorities = [
       `${address.streetLine1}, ${address.city}, ${address.state}, ${address.country}`,
       `${address.streetLine2}, ${address.city}, ${address.state}, ${address.country}`,
-      `${address.postalCode}`
+      `${address.postalCode}`,
     ];
 
     for (const query of geocodePriorities) {
-      const found = await performGeocoding(query);
-      if (found) return;
+      if (await performGeocoding(query)) return;
     }
 
     toast.error('Address not found. Please opt for normal shipping.');
@@ -127,28 +130,18 @@ console.log(selectedShop,shippingCoordinates)
     setSelectedOption(value);
 
     if (value === 'pickup') {
-      if (browserCoordinates) {
-        setIsModalOpen(true);
-      } else {
-        toast.error('Unable to get current location. Please enable location services.');
-      }
+      if (browserCoordinates) setIsModalOpen(true);
+      else toast.error('Enable location services to pick up from a dealer.');
     } else if (value === 'ship') {
-      if (!browserCoordinates && shippingAddress) { // Make sure to use shippingAddress instead of shippingData
+      if (!browserCoordinates && shippingAddress) {
         await attemptAddressGeocoding(shippingAddress);
       }
       setShowShippingPopup(true);
     }
   };
 
-  const handleShopSelection = (shop) => {
-    setSelectedShop(shop);
-    setIsModalOpen(false);
-  };
-
   const handleShippingConfirmation = async (useCurrentLocation) => {
-    if (useCurrentLocation) {
-      setShippingCoordinates(browserCoordinates);
-    } else if (shippingAddress) { // Ensure shippingAddress is used here
+    if (!useCurrentLocation && shippingAddress) {
       await attemptAddressGeocoding(shippingAddress);
     }
     setShowShippingPopup(false);
@@ -180,9 +173,8 @@ console.log(selectedShop,shippingCoordinates)
                 onChange={handleOptionChange}
                 className="form-radio text-indigo-600 h-5 w-5"
               />
-              <span className="text-gray-800">Pick from dealer</span>
+              <span className="text-gray-800">Pick up from dealer</span>
             </label>
-
             <label className="flex items-center space-x-2">
               <input
                 type="radio"
@@ -204,19 +196,17 @@ console.log(selectedShop,shippingCoordinates)
           setSelectedOption={setSelectedOption}
           coordinates={browserCoordinates}
           nearbyShops={nearbyShops}
-          onSelectShop={handleShopSelection}
-          // isLoading={isLoading}
           deliveryType={selectedOption}
         />
       )}
 
-      <Modal open={showShippingPopup} onClose={() => setShowShippingPopup(false)} className="flex align-center justify-center">
-        <div className="mt-[18%] p-6 bg-white rounded-md w-1/2 h-[150px] text-center">
+      <Modal open={showShippingPopup} onClose={() => setShowShippingPopup(false)}>
+        <div className="p-6 bg-white rounded-md text-center">
           <h2 className="text-xl font-bold">Shipping Confirmation</h2>
           <p>Is your shipping address the same as your current location?</p>
           <div className="flex justify-center gap-4 mt-4">
-            <Button variant="contained" color="primary" onClick={() => handleShippingConfirmation(true)}>Yes</Button>
-            <Button variant="contained" color="error" onClick={() => handleShippingConfirmation(false)}>No</Button>
+            <Button onClick={() => handleShippingConfirmation(true)}>Yes</Button>
+            <Button onClick={() => handleShippingConfirmation(false)}>No</Button>
           </div>
         </div>
       </Modal>
@@ -225,12 +215,13 @@ console.log(selectedShop,shippingCoordinates)
         className="bg-black w-full text-white p-2 rounded-lg mt-4"
         onClick={() => {
           localStorage.removeItem('selectedShippingDealers');
-          localStorage.removeItem('dealerData');
-          navigate("/checkout/billing");
+          navigate('/checkout/billing');
         }}
       >
         Continue
       </button>
+
+      {loading && <p className="text-gray-600">Loading your location...</p>}
     </div>
   );
 }

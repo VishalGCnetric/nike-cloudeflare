@@ -42,7 +42,10 @@ const {token}=useOutletContext();
       }
     }
   }, [paymentMethod, sdkReady]);
-
+  const handlePayPalSuccess = (details) => {
+    console.log("Payment Successful:", details);
+    handlePlaceOrder();
+  };
   useEffect(() => {
     if (sdkReady && paymentMethod === "paypal") {
       if (paypalRef.current) {
@@ -112,10 +115,7 @@ console.log(data)
 
   };
 
-  const handlePayPalSuccess = (details) => {
-    console.log("Payment Successful:", details);
-    handlePlaceOrder();
-  };
+ 
 
   const handleCloseModal = () => {
     setModalVisible(false);

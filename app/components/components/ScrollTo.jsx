@@ -1,15 +1,21 @@
-import  { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useInstantSearch } from 'react-instantsearch';
-import PropTypes from 'prop-types'; // Import PropTypes
+import PropTypes from 'prop-types';
+
 export function ScrollTo({ children }) {
   const { addMiddlewares } = useInstantSearch();
   const containerRef = useRef(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      // Skip execution in non-browser environments
+      return;
+    }
+
     const middleware = () => {
       return {
         onStateChange() {
-          const isFiltering = document.body.classList.contains('filtering');
+          const isFiltering = document.body?.classList.contains('filtering');
           const isTyping =
             document.activeElement?.tagName === 'INPUT' &&
             document.activeElement?.getAttribute('type') === 'search';
@@ -18,7 +24,7 @@ export function ScrollTo({ children }) {
             return;
           }
 
-          containerRef.current.scrollIntoView();
+          containerRef.current?.scrollIntoView();
         },
       };
     };
@@ -36,6 +42,7 @@ export function ScrollTo({ children }) {
     </div>
   );
 }
+
 ScrollTo.propTypes = {
-  children: PropTypes.node.isRequired, // children is a required node
+  children: PropTypes.node.isRequired,
 };

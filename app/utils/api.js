@@ -1,7 +1,7 @@
-const api = 'http://4.240.112.193:50102';
+const api = 'https://composer.nike.universalcommerce.io';
 // src/utils/api.js
 
-const BaseApi = import.meta.env.REACT_APP_BASE_URL;
+// const BaseApi = import.meta.env.REACT_APP_BASE_URL;
 
 /**
  * Fetch product by ID from the API.
@@ -31,20 +31,26 @@ export const fetchProductById = async productId => {
 
 // Login API Function
 export async function loginUser(data) {
-	const response = await fetch('http://4.240.112.193:50102/login', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(data),
-	});
+	try {
+		const response = await fetch(`${api}/login`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data),
+		});
 
-	if (!response.ok) {
-		const errorData = await response.json();
-		throw new Error(errorData.message || 'Login failed. Please try again.');
+		console.log('Response Status:', response.status);
+
+		if (!response.ok) {
+			const errorData = await response.json().catch(() => ({}));
+			console.error('Error Response:', errorData);
+			throw new Error(errorData.message || 'Login failed. Please try again.');
+		}
+
+		return await response.json(); // Successful response
+	} catch (error) {
+		console.error('Error during login:', error.message);
+		return { error: error.message || 'Login failed. Please try again.' };
 	}
-
-	return await response.json(); // Returns the token or other response data
 }
 
 /**
@@ -82,7 +88,7 @@ export const getUserDetails = async token => {
  * @throws {Error} - Throws an error if the request fails
  */
 export const getAllOrders = async token => {
-	const response = await fetch('http://4.240.112.193:50102/orders', {
+	const response = await fetch(`${api}/orders`, {
 		method: 'GET',
 		headers: {
 			accesstoken: token, // Add the token here
@@ -99,7 +105,7 @@ export const getAllOrders = async token => {
 
 // api.js
 export async function getOrderDetails(orderId, token) {
-	const url = `http://4.240.112.193:50102/order?orderId=${orderId}`;
+	const url = `${api}/order?orderId=${orderId}`;
 	const headers = {
 		accesstoken: token,
 	};
@@ -171,7 +177,7 @@ export async function checkout(token, data) {
 		throw error;
 	}
 }
-const API_BASE_URL = 'http://4.240.112.193:50102'; // Base URL for your API
+// const API_BASE_URL = 'http://4.240.112.193:50102'; // Base URL for your API
 
 /**
  * Utility function to handle POST requests
@@ -180,7 +186,7 @@ const API_BASE_URL = 'http://4.240.112.193:50102'; // Base URL for your API
  * @returns {Promise<object>} - The response data or error
  */
 export async function postRequest(endpoint, data) {
-	const url = `${API_BASE_URL}${endpoint}`;
+	const url = `${api}${endpoint}`;
 	const headers = {
 		'Content-Type': 'application/json',
 	};
@@ -213,7 +219,7 @@ export async function signup(userData) {
 	return await postRequest('/signup', userData);
 }
 export const fetchcontent = async () => {
-	console.log(BaseApi, 'baseapi');
+	console.log(api, 'baseapi');
 	try {
 		const response = await fetch(`${api}/content`);
 

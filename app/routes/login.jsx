@@ -11,48 +11,48 @@ export const action = async ({ request }) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-console.log(email,password)
+
+  console.log('Submitted Email:', email);
+  console.log('Submitted Password:', password);
+
   try {
     const response = await loginUser({ email, password });
-    const { success, message, user, token } = response;
+    console.log('API Response:', response);
 
-    if (success) {
-      // Create session
+    if (response.success) {
       const session = await getSession(request.headers.get("Cookie"));
-      session.set("userId", user.userId);
-      session.set("token", token); // Store the token
-      session.set("user", user); // Store user info if needed
+      session.set("userId", response.user.userId);
+      session.set("token", response.token);
+      session.set("user", response.user);
 
       return redirect("/", {
-        headers: {
-          "Set-Cookie": await commitSession(session),
-        },
+        headers: { "Set-Cookie": await commitSession(session) },
       });
     } else {
-      throw new Error(message);
+      throw new Error(response.message || 'Invalid username/password');
     }
   } catch (error) {
+    console.error('Error in action:', error.message);
     const session = await getSession(request.headers.get("Cookie"));
-    session.flash("error", "Invalid username/password");
+    session.flash("error", error.message || "Invalid username/password");
 
     return json(
-      { error: "Invalid username/password" },
+      { error: error.message || "Invalid username/password" },
       {
-        headers: {
-          "Set-Cookie": await commitSession(session),
-        },
+        headers: { "Set-Cookie": await commitSession(session) },
         status: 400,
       }
     );
   }
 };
 
+
 const NikeSignInForm = () => {
   const actionData = useActionData();
 
   useEffect(() => {
     if (actionData?.error) {
-      toast.error(actionData.error, { position: "top-center", autoClose: 3000 });
+      toast.error(actionData.error, { position: "top-center", autoClose: 1000 });
     }
   }, [actionData]);
 
