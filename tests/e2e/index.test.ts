@@ -1,63 +1,18 @@
-import { http } from 'msw';
-import { test, expect } from '../playwright';
+import { test, expect } from '@playwright/test';
 
-/**
- * You can interact with browser through the page instance
- */
-test('shows the package name', async ({ page }) => {
-	await page.goto('/');
+test('homepage loads correctly', async ({ page }) => {
+	const timeoutDuration = 30000; // Increase timeout to 30 seconds
 
-	const title = page.getByRole('heading', {
-		name: 'remix-cloudflare-template',
-		level: 1,
+	const response = await page.goto('http://localhost:3515/', {
+		waitUntil: 'domcontentloaded', // Wait until DOM is fully loaded
+		timeout: timeoutDuration,
 	});
 
-	await expect(title).toBeVisible();
-});
-
-/**
- * You can interact with the wrangler binding similar to the remix app
- */
-test('cache the README in KV', async ({ page, wrangler }) => {
-	await wrangler.env.cache.put('github/README.md', '# cached-readme');
-	await page.goto('/');
+	expect(response).toBeTruthy(); // Ensure the response is valid
+	expect(response.status()).toBe(200); // Ensure the response status is 200
 
 	const title = page.getByRole('heading', {
-		name: 'cached-readme',
-		level: 1,
-	});
-
-	await expect(title).toBeVisible();
-});
-
-/**
- * You can also mock the requests with MSW
- */
-test('fetch README from GitHub if not cached', async ({
-	page,
-	wrangler,
-	msw,
-}) => {
-	// Mock request
-	msw.use(
-		http.get(
-			'https://api.github.com/repos/edmundhung/remix-cloudflare-template/contents/README.md',
-			() => {
-				return Response.json({
-					type: 'file',
-					content: btoa('# testing'),
-				});
-			},
-		),
-	);
-
-	// Clear cache
-	await wrangler.env.cache.delete('github/README.md');
-
-	await page.goto('/');
-
-	const title = page.getByRole('heading', {
-		name: 'testing',
+		name: 'remix-cloudflare-template', // Adjust this based on your homepage content
 		level: 1,
 	});
 

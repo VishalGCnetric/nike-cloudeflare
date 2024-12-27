@@ -15,6 +15,8 @@ export default defineConfig({
 	use: {
 		baseURL: `http://localhost:${PORT}`,
 		trace: 'on-first-retry',
+		// Add the headless configuration here
+		headless: true, // Enable headless mode
 	},
 
 	projects: [
@@ -22,6 +24,8 @@ export default defineConfig({
 			name: 'chromium',
 			use: {
 				...devices['Desktop Chrome'],
+				// Optionally set headless for this project as well
+				headless: true, // Ensure it's in headless mode for this project
 			},
 		},
 	],
