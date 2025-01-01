@@ -2,6 +2,7 @@ import { test as baseTest, expect as baseExpect } from '@playwright/test';
 import { type ViteDevServer, createServer } from 'vite';
 import { type SetupServer, setupServer } from 'msw/node';
 import { type PlatformProxy, getPlatformProxy } from 'wrangler';
+import { chromium, Browser, Page, BrowserContext } from 'playwright';
 
 // interface TestFixtures {}
 
@@ -10,6 +11,9 @@ interface WorkerFixtures {
 	wrangler: PlatformProxy<Env>;
 	server: ViteDevServer;
 	msw: SetupServer;
+	browser: Browser;
+	context: BrowserContext;
+	page: Page;
 }
 
 export async function clearKV(namespace: KVNamespace): Promise<void> {
@@ -23,14 +27,13 @@ export const expect = baseExpect.extend({});
 export const test = baseTest.extend<any, WorkerFixtures>({
 	// Assign a unique "port" for each worker process
 	port: [
-		// eslint-disable-next-line no-empty-pattern
 		async ({}, use, workerInfo) => {
-			await use(3515 + workerInfo.workerIndex);
+			await use(8787 + workerInfo.workerIndex);
 		},
 		{ scope: 'worker' },
 	],
 
-	// Ensure visits works with relative path
+	// Ensure visits work with relative path
 	baseURL: ({ port }, use) => {
 		use(`http://localhost:${port}`);
 	},
@@ -53,7 +56,6 @@ export const test = baseTest.extend<any, WorkerFixtures>({
 	],
 
 	msw: [
-		// eslint-disable-next-line no-empty-pattern
 		async ({}, use) => {
 			const server = setupServer();
 
@@ -68,19 +70,48 @@ export const test = baseTest.extend<any, WorkerFixtures>({
 
 	// To access wrangler bindings similar to Remix / Vite
 	wrangler: [
-		// eslint-disable-next-line no-empty-pattern
 		async ({}, use) => {
 			const wrangler = await getPlatformProxy<Env>();
 
 			// To access bindings in the tests.
 			await use(wrangler);
 
-			// Ensure all cachees are cleaned up
+			// Ensure all caches are cleaned up
 			await clearKV(wrangler.env.cache);
 
 			await wrangler.dispose();
 		},
 		{ scope: 'worker', auto: true },
+	],
+
+	// Include Playwright Browser setup
+	browser: [
+		async ({}, use) => {
+			const browser = await chromium.launch({ headless: true });
+			await use(browser);
+			await browser.close();
+		},
+		{ scope: 'worker', auto: true },
+	],
+
+	// Create a new browser context for each test
+	context: [
+		async ({ browser }, use) => {
+			const context = await browser.newContext();
+			await use(context);
+			await context.close();
+		},
+		{ scope: 'test' },
+	],
+
+	// Create a new page for each test
+	page: [
+		async ({ context }, use) => {
+			const page = await context.newPage();
+			await use(page);
+			await page.close();
+		},
+		{ scope: 'test' },
 	],
 });
 
